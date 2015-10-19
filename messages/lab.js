@@ -3,7 +3,7 @@ var text;
 function parse () {
     myRequest = new XMLHttpRequest();
     myRequest.addEventListener("load", getData)
-    myRequest.open("get", "data.json", "true");
+    myRequest.open("get", "http://messagehub.herokuapp.com/messages.json", "true");
     myRequest.send();
 }
 
