@@ -9,7 +9,6 @@ function parse () {
 
 function getData () {
     text = JSON.parse(myRequest.responseText);
-    console.log(text);
     for(var i = 0; i < 2; i++) {
         document.getElementById('messages').innerHTML += "<p>" + text[i].content + " " + text[i].username + "</p>";
     }
