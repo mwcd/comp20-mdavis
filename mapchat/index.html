@@ -11,7 +11,7 @@
         <script>
             var mylat = 0;
             var mylng = 0;
-            var request = new XMLttprequest();
+            var request = new XMLHttprequest();
             var me = new google.maps.LatLng(mylat, mylng);
             var myOptions = {
                 zoom: 13,
@@ -63,6 +63,7 @@
 
         </script>
     </head>
+
     <body onload="init()">
         <div id="map_canvas"></div>
     </body>
