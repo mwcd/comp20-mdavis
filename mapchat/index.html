@@ -12,6 +12,8 @@
             var mylat = 0;
             var mylng = 0;
             var request = new XMLHttpRequest();
+            //SEND RESULTS TO SERVER
+            myRequest.addEventListener("load", sendData)
             var me = new google.maps.LatLng(mylat, mylng);
             var myOptions = {
                 zoom: 13,
@@ -59,6 +61,15 @@
                     infowindow.setContent(marker.title);
                     infowindow.open(map, marker);
                 });
+            }
+
+            function sendData {
+            //https://stackoverflow.com/questions/9713058/sending-post-data-with-a-xmlhttprequest
+                var myCredentials = '[{"login": "GlendaMaletic","lat":' + myLat + ',"lng":' + myLng + ',"message": "This is my user data"}]'
+                request.open("POST", "https://secret-about-box.herokuapp.com/sendLocation", "true");
+                request.send(myCredentials);
+                text = JSON.parse(request.responseText);
+                console.log(text);
             }
 
         </script>
