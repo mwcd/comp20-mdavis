@@ -29,9 +29,6 @@
                 else {
                     alert("Geolocation is not supported by your web browser.  What a shame!");
                 }
-                sendLocation()
-            }
-            function sendLocation() {
                 myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
                 myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
                 console.log(myData);
