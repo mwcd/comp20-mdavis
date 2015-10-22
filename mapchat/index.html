@@ -1,81 +1,18 @@
-<!DOCTYPE html> 
+<!--Started from Ming's Template on geolocation-->
+<!DOCTYPE html>
 
 <html>
-    <!--used google_maps example-->
-    <head>
-        <title>MapChat</title>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
-        <link rel="stylesheet" href="style.css"/>
 
-        <script>
-            var mylat = 0;
-            var mylng = 0;
-            var request = new XMLHttpRequest();
-            //SEND RESULTS TO SERVER
-            myRequest.addEventListener("load", sendData)
-            var me = new google.maps.LatLng(mylat, mylng);
-            var myOptions = {
-                zoom: 13,
-                center: me,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            var map;
-            var marker;
-            var infowindow = new google.maps.InfoWindow();
-
-            function init() {
-                //create map in element map_canvas
-                map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-                getMyLocation();
-            }
-
-            function getMyLocation() {
-                if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        myLat = position.coords.latitude;
-                        myLng = position.coords.longitude;
-                        renderMap();
-                    });
-                }
-                else {
-                    alert("Geolocation is not supported by your web browser.  What a shame!");
-                }
-            }
-
-            function renderMap() {
-                me = new google.maps.LatLng(myLat, myLng);
-                
-                // Update map and go there...
-                map.panTo(me);
-    
-                // Create a marker
-                marker = new google.maps.Marker({
-                    position: me,
-                    title: "Here I Am!"
-                });
-                marker.setMap(map);
-                    
-                // Open info window on click of marker
-                google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent(marker.title);
-                    infowindow.open(map, marker);
-                });
-            }
-
-            function sendData {
-            //https://stackoverflow.com/questions/9713058/sending-post-data-with-a-xmlhttprequest
-                var myCredentials = '[{"login": "GlendaMaletic","lat":' + myLat + ',"lng":' + myLng + ',"message": "This is my user data"}]'
-                request.open("POST", "https://secret-about-box.herokuapp.com/sendLocation", "true");
-                request.send(myCredentials);
-                text = JSON.parse(request.responseText);
-                console.log(text);
-            }
-
-        </script>
-    </head>
-
-    <body onload="init()">
-        <div id="map_canvas"></div>
-    </body>
+	<head>
+		<title>Geolocation Map Example</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+		<link rel="stylesheet" href="style.css" />
+		
+		<script src="script.js"></script>
+	</head>
+	
+	<body onload="init()">
+		<div id="map_canvas"></div>
+	</body>
 </html>
