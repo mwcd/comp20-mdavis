@@ -1,7 +1,7 @@
 //Started from Ming's Template on geolocation
-var myLat = 0;
+            var myLat = 0;
             var myLng = 0;
-            var request = new XMLHttpRequest();
+            var myRequest = new XMLHttpRequest();
             var me = new google.maps.LatLng(myLat, myLng);
             var myOptions = {
                         zoom: 13, // The larger the zoom number, the bigger the zoom
@@ -16,6 +16,14 @@ var myLat = 0;
             {
                 map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
                 getMyLocation();
+                myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
+                myRequest.send(myData)
+                myRequest.onreadystatechange = function() {
+                    if (myRequest.readyState == 4 && myRequest.status == 200) {
+                        text = JSON.parse(myRequest.responseText);
+                        console.log(text);
+                    }
+                }
             }
             
             function getMyLocation() {
@@ -23,6 +31,7 @@ var myLat = 0;
                     navigator.geolocation.getCurrentPosition(function(position) {
                         myLat = position.coords.latitude;
                         myLng = position.coords.longitude;
+                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
                         renderMap();
                     });
                 }
