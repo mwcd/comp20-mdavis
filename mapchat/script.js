@@ -31,7 +31,6 @@
                 }
                 sendLocation()
             }
-
             function sendLocation() {
                 myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
                 myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
