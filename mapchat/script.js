@@ -37,6 +37,7 @@
                     if (myRequest.readyState == 4 && myRequest.status == 200) {
                         text = JSON.parse(myRequest.responseText);
                         console.log(text);
+                        console.log(text);
                     }
                 }
             }
