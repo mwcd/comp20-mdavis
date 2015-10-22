@@ -17,11 +17,11 @@
                 map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
                 getMyLocation();
                 myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
-                myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
-                console.log(myData);
-                myRequest.send(myData)
                 myRequest.onreadystatechange = function() {
                     if (myRequest.readyState == 4 && myRequest.status == 200) {
+                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
+                        console.log(myData);
+                        myRequest.send(myData)
                         text = JSON.parse(myRequest.responseText);
                         console.log(text);
                     }
