@@ -23,15 +23,16 @@
                     navigator.geolocation.getCurrentPosition(function(position) {
                         myLat = position.coords.latitude;
                         myLng = position.coords.longitude;
-                        renderMap();
                         myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
-                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
+                        myRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=BATMAN"
                         console.log(myData);
                         myRequest.send(myData);
                         myRequest.onreadystatechange = function() {
                             if (myRequest.readyState == 4 && myRequest.status == 200) {
                                 text = JSON.parse(myRequest.responseText);
                                 console.log(text);
+                                renderMap();
                             }
                         }
                     });
