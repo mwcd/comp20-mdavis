@@ -1,6 +1,7 @@
 //Started from Ming's Template on geolocation
             var myLat = 0;
             var myLng = 0;
+            var myMessage = "2 is for tuba";
             var myRequest = new XMLHttpRequest();
             var me = new google.maps.LatLng(myLat, myLng);
             var myOptions = {
@@ -25,7 +26,7 @@
                         myLng = position.coords.longitude;
                         myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
                         myRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=BATMAN"
+                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=" + encodeURIComponent(myMessage);
                         console.log(myData);
                         myRequest.send(myData);
                         myRequest.onreadystatechange = function() {
@@ -52,9 +53,32 @@
                 // Create a marker
                 marker = new google.maps.Marker({
                     position: me,
-                    title: "Here I Am!"
+                    title: "Login: GlendaMaletic\nMessage: " + myMessage
                 });
                 marker.setMap(map);
+
+                for (var k in text) {
+                    if(k != 0) {
+                        tempPerson = new google.maps.LatLng(text[k].lat, text[k].lng);
+                        var R = 3959; // Earth's radius in miles
+                        var lat1 = myLat * Math.PI / 180;
+                        var lat2 = text[k].lat * Math.PI / 180;
+                        var deltaLat = (text[k].lat-myLat) * Math.PI / 180;
+                        var deltaLng = (text[k].lng-myLng) * Math.PI / 180;
+
+                        var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+                            Math.cos(lat1) * Math.cos(lat2) *
+                            Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
+                        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                        var d = R * c;
+                        tempMarker = new google.maps.Marker({
+                            position: tempPerson,
+                            title: "Login: " + text[k].login + "\n Message: " + text[k].message + "\nDistance: " + d + " miles"
+                        });
+                        tempMarker.setMap(map);
+                    }
+                }
                     
                 // Open info window on click of marker
                 google.maps.event.addListener(marker, 'click', function() {
