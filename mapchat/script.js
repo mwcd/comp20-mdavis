@@ -1,6 +1,7 @@
 //Started from Ming's Template on geolocation
             var myLat = 0;
             var myLng = 0;
+            var myMessage = "2 is for tuba";
             var myRequest = new XMLHttpRequest();
             var me = new google.maps.LatLng(myLat, myLng);
             var myOptions = {
@@ -9,7 +10,7 @@
                         mapTypeId: google.maps.MapTypeId.ROADMAP
                     };
             var map;
-            var marker;
+            var initMarker;
             var infowindow = new google.maps.InfoWindow();
             
             function init()
@@ -23,19 +24,17 @@
                     navigator.geolocation.getCurrentPosition(function(position) {
                         myLat = position.coords.latitude;
                         myLng = position.coords.longitude;
-                        renderMap();
+                        myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
+                        myRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=" + encodeURIComponent(myMessage);
+                        myRequest.send(myData);
+                        myRequest.onreadystatechange = function() {
+                            if (myRequest.readyState == 4 && myRequest.status == 200) {
+                                text = JSON.parse(myRequest.responseText);
+                                renderMap();
+                            }
+                        }
                     });
-                    myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
-                    myData = "login=GlendaMaletic&lat=" + myLat + "&lng=" + myLng + "&message=hello world"
-                    console.log(myData);
-                    myRequest.send(myData)
-                    myRequest.onreadystatechange = function() {
-                    if (myRequest.readyState == 4 && myRequest.status == 200) {
-                        text = JSON.parse(myRequest.responseText);
-                        console.log(text);
-                        console.log(text);
-                    }
-                }
                 }
                 else {
                     alert("Geolocation is not supported by your web browser.  What a shame!");
@@ -50,15 +49,44 @@
                 map.panTo(me);
     
                 // Create a marker
-                marker = new google.maps.Marker({
+                initMarker = new google.maps.Marker({
                     position: me,
-                    title: "Here I Am!"
+                    title: "Login: GlendaMaletic"
                 });
-                marker.setMap(map);
+                initMarker.setMap(map);
+
+                for (var k in text) {
+                    tempPerson = new google.maps.LatLng(text[k].lat, text[k].lng);
+                    var R = 3959; // Earth's radius in miles
+                    var lat1 = myLat * Math.PI / 180;
+                    var lat2 = text[k].lat * Math.PI / 180;
+                    var deltaLat = (text[k].lat-myLat) * Math.PI / 180;
+                    var deltaLng = (text[k].lng-myLng) * Math.PI / 180;
+
+                    var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+                        Math.cos(lat1) * Math.cos(lat2) *
+                        Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                    var d = R * c;
                     
-                // Open info window on click of marker
-                google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent(marker.title);
-                    infowindow.open(map, marker);
-                });
+                    //http://stackoverflow.com/questions/3158598/google-maps-api-v3-adding-an-infowindow-to-each-marker
+                    var marker = new google.maps.Marker({map: map, position: tempPerson, clickable: true});
+
+                    marker.info = new google.maps.InfoWindow({
+                        content: '<h1>Username: ' + text[k].login + '</h1>'+
+                              '<div id="bodyContent">'+
+                              '<p>Message: ' + text[k].message + '</p>' +
+                              '<p>Distance: ' + d + ' miles</p>' +
+                              '</div>'
+                    });
+
+                    google.maps.event.addListener(marker, 'click', function() {
+                        var marker_map = this.getMap();
+                        this.info.open(marker_map, this);
+                    });
+                }
             }
+
+
+
