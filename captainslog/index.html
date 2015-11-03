@@ -20,10 +20,12 @@
                 if(e.which == 13) {
     //http://stackoverflow.com/questions/4088467/get-the-value-in-an-input-text-box
                     var myMsg = $('#msg').val();
-                    messages.push(myMsg);
                     var curTime = new Date();
+                    myMsg = curTime + ' - ' + myMsg;
+                    messages.push(myMsg);
+                    
     //http://stackoverflow.com/questions/15581059/how-to-add-text-to-an-existing-div-with-jquery
-                    $('<p>' + curTime + ' - ' + myMsg + '</p>').prependTo('#log');
+                    $('<p>' + myMsg + '</p>').prependTo('#log');
                     localStorage.setItem('messages', JSON.stringify(messages));
 
                 }
