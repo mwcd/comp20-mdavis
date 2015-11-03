@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Captain's Log</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        //http://www.smashingmagazine.com/2010/10/local-storage-and-how-to-use-it/
+            messages = JSON.parse(localStorage.getItem('messages'));
+            if (messages != null) {
+                $.each(messages, function(index, value) {
+                    $('<p>' + value + '</p>').prependTo('#log');
+                });
+            } else messages = [];
+            
+    //http://stackoverflow.com/questions/14919459/using-jquery-on-to-watch-for-enter-key-press
+            $('#msg').keypress(function(e) {
+                if(e.which == 13) {
+    //http://stackoverflow.com/questions/4088467/get-the-value-in-an-input-text-box
+                    var myMsg = $('#msg').val();
+                    messages.push(myMsg);
+                    var curTime = new Date();
+    //http://stackoverflow.com/questions/15581059/how-to-add-text-to-an-existing-div-with-jquery
+                    $('<p>' + curTime + ' - ' + myMsg + '</p>').prependTo('#log');
+                    localStorage.setItem('messages', JSON.stringify(messages));
+
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <h1>Captain's Log</h1>
+    <h3>New entry: <input type="text" id="msg" name="msg" size="30" /></h3>
+    <div id="log"></div>
+</body>
+</html>
