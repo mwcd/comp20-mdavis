@@ -1,0 +1,1 @@
+###Based off Ming's nodemongoapp example###

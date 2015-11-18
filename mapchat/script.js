@@ -25,13 +25,14 @@
             navigator.geolocation.getCurrentPosition(function(position) {
                 myLat = position.coords.latitude;
                 myLng = position.coords.longitude;
-                myRequest.open("POST", "https://secret-about-box.herokuapp.com/sendLocation");
+                myRequest.open("POST", "https://shrouded-meadow-4529.herokuapp.com/");
                 myRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 myData = "login=" + myLogin + "&lat=" + myLat + "&lng=" + myLng + "&message=" + encodeURIComponent(myMessage);
                 myRequest.send(myData);
                 myRequest.onreadystatechange = function() {
                     if (myRequest.readyState == 4 && myRequest.status == 200) {
                         text = JSON.parse(myRequest.responseText);
+                        console.log(text);
                         renderMap();
                     }
                 }
