@@ -25,7 +25,7 @@
             navigator.geolocation.getCurrentPosition(function(position) {
                 myLat = position.coords.latitude;
                 myLng = position.coords.longitude;
-                myRequest.open("POST", "https://thawing-scrubland-7965.herokuapp.com/");
+                myRequest.open("POST", "https://thawing-scrubland-7965.herokuapp.com/sendLocation");
                 myRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 myData = "login=" + myLogin + "&lat=" + myLat + "&lng=" + myLng + "&message=" + encodeURIComponent(myMessage);
                 myRequest.send(myData);
