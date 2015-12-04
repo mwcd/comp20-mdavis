@@ -1,0 +1,19 @@
+body {
+    padding: 0 50px 0 50px;
+    font-family: 'Merriweather', serif;
+    background: #f9f9ff;
+}
+
+h2 {
+    border-bottom: solid;
+    border-width: 1px;
+    border-color: #aaaaaa;
+}
+
+h1, h2 {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.less-space {
+    padding-top: 0px;
+}
