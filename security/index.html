@@ -16,41 +16,45 @@
     <p>Testing was carried out in two phases. The first phase was a "black box" testing phase. In other words, I carried out this phase of testing with no knowledge of what the server side code looked like. During phase two, I examined the server side code, and used this additional knowledge to find additional security flaws.</p>
     <p><span style="font-weight:bold">Tools used:</span> For this assessment I used <a href="https://chrome.google.com/webstore/detail/tamper-chrome-extension/hifhgpdkfodlpnlmlnmhchnkepplebkb?hl=en">Tamper Chrome</a> and <a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en">Postman</a>.</p>
     <h2>Abstract</h2>
-    <p>This is where abstract will go</p>
+    <p>The biggest problems found within this application center around trust. This application puts too much trust in both user input and client side applications. The biggest problem I was able to find was cross-site scripting. However, both improper data and the CORS wildcard also proved to be security issues for either this server-side application, or possible security issues for client-side applications relying on this server.</p>
     <h2>Findings</h2>
     <ul>
-        <li>Issue 1
+        <li><span style="font-weight:bold;font-size:18px;">Cross site scripting</span></li>
             <ul>
-                <li>Issue</li>
-                <li>Location</li>
-                <li>Severity</li>
-                <li>Description</li>
-                <li>Proof of vulnerability</li>
-                <li>Resolution</li>
+                <li><span style="font-weight:bold">Location:</span> Javascript was inserted into the message field of the /sendLocation POST API.</li>
+                <li><span style="font-weight:bold">Severity:</span> High. This security flaw is incredibly easy to exploit, and has the potential to severely impact everyone using the service.</li>
+                <li><span style="font-weight:bold">Description:</span> Javascript that was inserted via POST into the message field of the /sendLocation POST API was not effectively sanitized. This affected the index "/" page, as well as any web application receiving data from either the /sendLocation POST API or the /latest.json GET API that didn't sanitize the data it received.</li>
+                <li><span style="font-weight:bold">Proof of vulnerability:</span> I was able to insert the script <code>document.body.style.backgroundImage = "url('http://i.telegraph.co.uk/multimedia/archive/02830/cat_2830677b.jpg')";</code>" which made the background into cats.<div class="images"><div class="left-img"><img src="./img/xssreg.png" alt="Site before XSS">
+                </div><div class="right-img"><img src="./img/xsscats.png" alt="Site before XSS">
+                </div></div></li>
+                <!--http://stackoverflow.com/questions/20855482/preventing-html-and-script-injections-in-javascript-->
+                <li><span style="font-weight:bold">Resolution:</span> By replacing <code>&lt;</code> and <code>&gt;</code> with their HTML equivalents, this issue would be solved, as it is impossible to call a script without <code>&lt;script&gt;</code>. The javascript to encode these symbols is fairly simple: <code>html = html.replace(/&lt;/g, &quot;&amp;lt;&quot;).replace(/&gt;/g, &quot;&amp;gt;&quot;);</code></li>
             </ul>
-        </li>
-        <li>Issue 2
+        </span></li>
+        <li><span style="font-weight:bold;font-size:18px;">CORS Wildcard</li>
+            <ul><!--http://www.w3.org/wiki/CORS_Enabled-->
+                <li><span style="font-weight:bold">Issue:</span><code> Access-Control-Allow-Origin: *</code> allows scripts hosted anywhere to use this server.</li>
+                <li><span style="font-weight:bold">Location:</span> This issue is found within the first two lines of both GET API's and the POST API.</li>
+                <li><span style="font-weight:bold">Severity:</span> High. Allowing scripts hosted on any site to access these methods means that anyone in the world has unrestricted access to this data. </li>
+                <li><span style="font-weight:bold">Description:</span> The actual security risk depends on the nature of the data stored on the server. There are certain databases which should have no problem with being acessible by anyone. For instance, the database containing all publicly available Wikipedia data would have no problem using the CORS wildcard this way. However, in a case like this where the data includes locations, it seems like a poor idea to have the data accessible to everyone.</li>
+                <li><span style="font-weight:bold">Proof of vulnerability:</span> This issue can be seen on both the "/" route directory, as well as in the data returned via POST request.<div class="images"><div class="full-img"><img src="./img/wildcard.png" alt="CORS code">
+                </div></div></li>
+                <li><span style="font-weight:bold">Resolution:</span> By changing the CORS header to<code> Access-Control-Allow-Origin: http://example.com</code>, you can whitelist individual websites.</li>
+            </ul>
+        </span></li>
+        <li><span style="font-weight:bold;font-size:18px;">Improper lat & lng</li>
             <ul>
-                <li>Issue</li>
-                <li>Location</li>
-                <li>Severity</li>
-                <li>Description</li>
-                <li>Proof of vulnerability</li>
-                <li>Resolution</li>
+                <li><span style="font-weight:bold">Issue:</span> <code>lat</code> and <code>lng</code> are not required to be values between -90 and 90 and -180 and 180 respectively. More importantly, they aren't required to be numbers at all. The system will accept an empty string for both these values.</li>
+                <li><span style="font-weight:bold">Location:</span> This issue is located in the POST /sendLocation API.</li>
+                <li><span style="font-weight:bold">Severity:</span> Medium. The severity of this issue is not high as it would not give a malicious user any data they couldn't already access, and it doesn't effect other data points. However, it is important to realize that a data point with no latitude and longitude could very easily break a client side application like Mapchat, and in the case of a broken client side application, it is difficult to determine how big of a problem this is. However, it is quite possible that, upon breaking, a client side application might allow access to too much data to a malicious user. For this reason, this security vulnerability is more severe than low.</li>
+                <li><span style="font-weight:bold">Description:</span> The server will take any numerical value for latitude and longitude, as well as the empty string.</li>
+                <li><span style="font-weight:bold">Proof of vulnerability:</span> This issue can be seen on both the "/" route directory, as well as in the data returned via POST request.<div class="images"><div class="full-img"><img src="./img/rootpost.png" alt="Site before XSS">
+                </div></div></li>
+                <li><span style="font-weight:bold">Resolution:</span> This can be resolved by, in addition to verifying data with <code>isNaN</code>, also using something like <code>lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && lat != "" && lng != ""</code></li>
             </ul>
-        </li>
-        <li>Issue 3
-            <ul>
-                <li>Issue</li>
-                <li>Location</li>
-                <li>Severity</li>
-                <li>Description</li>
-                <li>Proof of vulnerability</li>
-                <li>Resolution</li>
-            </ul>
-        </li>
+        </span></li>
     </ul>
     <h2>Conclusion</h2>
-    <p>This is where my conclusion will go</p>
+    <p>This application contains many security flaws. Above I have outlined three of the most pertinent and applicable of these flaws. The biggest conclusion that I've drawn is that every issue I have outlined above was both easy to find, and would be easy to solve. This shows how important a security check is as a part of a development cycle. It would be nearly impossible to foresee all possible security issues in any application. However, by spending time trying to break your own project, it is easy to dig up the most common and exploitable security attacks, and once you have discovered these issues, they are most often trivial to fix.</p>
 </body>
 </html>
